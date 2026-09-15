@@ -43,4 +43,4 @@ def simulate(N0, lam, dt=0.05, steps=200, seed=0):
         decayed = rng.binomial(N, lam * dt)  # decide all atoms at once
         N -= decayed
         counts.append(N)
-    return np.array(counts)
+    return np.array(counts)# Lab A work branch

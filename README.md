@@ -1,45 +1,128 @@
-# CSPC — Computer Science for Physics and Chemistry
+# CSPC — PW1 Lab A
 
-My coursework repository for the course.
-Each practical lives under `PW<n>/Lab <X>/`.
+## Setup & Usage
 
-## Setup
+This project contains a radioactive decay simulation implemented in Python.
 
-Create and activate the environment for a given lab:
+The project uses a Conda environment named `cspc` with Python 3.11, NumPy, and pytest.
+
+### Create the environment
+
+From the repository root:
 
 ```bash
-conda env create -f "PW<n>/Lab <X>/environment.yml"
+conda env create -f "PW1/Lab A/environment.yml"
+```
+
+Activate the environment:
+
+```bash
 conda activate cspc
 ```
 
-Run the tests for a lab from inside its folder:
+### Run the tests
+
+Go to the Lab A directory:
 
 ```bash
-cd "PW<n>/Lab <X>"
+cd "PW1/Lab A"
+```
+
+Run:
+
+```bash
 pytest -v
+```
+
+The test suite contains three tests covering the initial atom count, rejection of a negative decay rate, and agreement with the analytical decay law.
+
+### Run the performance benchmark
+
+From `PW1/Lab A`:
+
+```bash
+python speed.py
+```
+
+The benchmark compares the pure-Python loop implementation with the vectorised NumPy implementation.
+
+---
+
+## Correctness
+
+The simulation models radioactive decay.
+
+Each atom has a probability of decaying during a short time step. The simulation provides two implementations:
+
+* `simulate_loop` — a pure-Python implementation that loops over individual atoms.
+* `simulate` — a vectorised NumPy implementation.
+
+The expected analytical law is:
+
+```text
+N(t) = N0 * exp(-lam * t)
+```
+
+The test suite contains three tests:
+
+1. `test_starts_at_N0` checks that the simulation starts with `N0` atoms.
+2. `test_rejects_negative_rate` checks that a negative decay rate raises `ValueError`.
+3. `test_matches_law` runs the simulation with multiple random seeds, calculates the average final number of atoms, and checks that it is close to the analytical result.
+
+All three tests pass:
+
+```text
+3 passed
 ```
 
 ---
 
-## PW1 — Lab A: Reproducible Foundations
+## Performance
 
-**What I built:**
-- <one or two lines: the CSPC repo, the environment, the decay simulation, the tests>
+The performance benchmark uses:
 
-**Speed comparison (loop vs NumPy):**
+```text
+N0 = 20000
+steps = 200
+lam = 0.4
+dt = 0.05
+seed = 0
+```
 
-| version | time (s) |
-|---------|----------|
-| pure-Python loop | ... |
-| NumPy (vectorised) | ... |
+The measured results on this computer were:
 
-- Speed-up: **... × faster**
+```text
+Loop time: 0.175003 seconds
+NumPy time: 0.000231 seconds
+Speedup: 757.82x
+```
 
-**Tests:** all passing? (yes / no)
+The NumPy implementation was measured to take less time than the pure-Python loop for this benchmark.
 
-**Conclusion:**
-- <2–3 sentences: what worked, what you learned, any problems you hit and how you solved them>
+The speedup is calculated as:
+
+```text
+loop time / NumPy time
+```
+
+Therefore:
+
+```text
+0.175003 / 0.000231 ≈ 757.82
+```
+
+The benchmark uses `time.perf_counter()` to measure execution time.
 
 ---
 
-<!-- Future sessions: add a new "## PW<n> — Lab <X>" section below. -->
+## Reproducibility
+
+The simulation accepts a `seed` argument and uses NumPy's random number generator:
+
+```python
+rng = np.random.default_rng(seed)
+```
+
+Using the same seed makes the random simulation reproducible.
+
+The tests use multiple seeds when checking the average behaviour of the sim
